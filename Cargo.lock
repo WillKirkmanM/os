@@ -113,11 +113,28 @@ dependencies = [
  "crossbeam-queue",
  "lazy_static",
  "linked_list_allocator",
+ "pc-keyboard",
+ "pic8259",
  "spin",
  "uart_16550",
  "vga",
  "volatile 0.2.7",
- "x86_64 0.15.2",
+ "x86_64",
+]
+
+[[package]]
+name = "pc-keyboard"
+version = "0.5.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5c6f2d937e3b8d63449b01401e2bae4041bc9dd1129c2e3e0d239407cf6635ac"
+
+[[package]]
+name = "pic8259"
+version = "0.10.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "cb844b5b01db1e0b17938685738f113bfc903846f18932b378bc0eabfa40e194"
+dependencies = [
+ "x86_64",
 ]
 
 [[package]]
@@ -181,7 +198,7 @@ dependencies = [
  "font8x8",
  "num-traits",
  "spinning_top",
- "x86_64 0.14.13",
+ "x86_64",
 ]
 
 [[package]]
@@ -212,18 +229,6 @@ name = "x86_64"
 version = "0.14.13"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c101112411baafbb4bf8d33e4c4a80ab5b02d74d2612331c61e8192fc9710491"
-dependencies = [
- "bit_field",
- "bitflags 2.9.0",
- "rustversion",
- "volatile 0.4.6",
-]
-
-[[package]]
-name = "x86_64"
-version = "0.15.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0f042214de98141e9c8706e8192b73f56494087cc55ebec28ce10f26c5c364ae"
 dependencies = [
  "bit_field",
  "bitflags 2.9.0",

@@ -67,6 +67,20 @@ impl Window {
         
         writer.color_code = original_color;
     }
+
+    pub fn clear(&self) {
+        let mut writer = WRITER.lock();
+        let original_color = writer.color_code;
+        writer.color_code = ColorCode::new(self.color, Color::Black);
+        
+        for y in (self.y + 1)..(self.y + self.height - 1) {
+            for x in (self.x + 1)..(self.x + self.width - 1) {
+                writer.write_char_at(x, y, b' ');
+            }
+        }
+        
+        writer.color_code = original_color;
+    }
     
     pub fn print_at(&self, x_offset: usize, y_offset: usize, text: &str) {
         let start_x = self.x + 1 + x_offset;
@@ -126,7 +140,16 @@ impl WindowManager {
             self.active_window = id;
         }
     }
-    
+
+
+    pub fn get_active_window(&mut self) -> Option<Window> {
+        if self.active_window < self.windows.len() {
+            self.windows[self.active_window]
+        } else {
+            None
+        }
+    }
+
     pub fn draw_all(&self) {
         let active = self.active_window;
         

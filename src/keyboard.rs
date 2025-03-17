@@ -1,16 +1,16 @@
 use spin::Mutex;
 use lazy_static::lazy_static;
 use pc_keyboard::{layouts, DecodedKey, HandleControl, Keyboard, ScancodeSet1};
-use crate::window_manager::WINDOW_MANAGER;
+use crate::terminal::TERMINAL;
 
 lazy_static! {
     static ref KEYBOARD: Mutex<Keyboard<layouts::Us104Key, ScancodeSet1>> = 
         Mutex::new(Keyboard::new(layouts::Us104Key, ScancodeSet1, HandleControl::Ignore));
+    static ref ESC_PRESSED: Mutex<bool> = Mutex::new(false);
 }
 
 static mut COMMAND_BUFFER: [char; 64] = ['\0'; 64];
-static mut BUFFER_POS: usize = 0;
-static mut CURSOR_Y: u16 = 1;
+pub static mut BUFFER_POS: usize = 0;
 
 pub fn handle_keyboard_interrupt(scancode: u8) {
     let mut keyboard = KEYBOARD.lock();
@@ -26,39 +26,25 @@ pub fn handle_keyboard_interrupt(scancode: u8) {
             }
         }
     }
+
+    if scancode == 0x01 {
+        set_esc_pressed(true);
+    }
 }
 
 fn process_character(c: char) {
     unsafe {
-        let mut manager = WINDOW_MANAGER.lock();
-        if let Some(terminal_window) = manager.get_active_window() {
-            if c == '\n' {
-                let mut command_str = [0u8; 64];
-                for (i, &ch) in COMMAND_BUFFER[0..BUFFER_POS].iter().enumerate() {
-                    command_str[i] = ch as u8;
-                }
-                let command = core::str::from_utf8(&command_str[..BUFFER_POS]).unwrap_or("");
-                
-                BUFFER_POS = 0;
-                for i in 0..64 {
-                    COMMAND_BUFFER[i] = '\0';
-                }
-                
-                CURSOR_Y += 1;
-                drop(manager);
-                crate::command::execute_command(command, CURSOR_Y as u16);
-                CURSOR_Y += 2;
-            } else {
-                COMMAND_BUFFER[BUFFER_POS] = c;
-                BUFFER_POS += 1;
-                
-                let c_str = [c as u8];
-                terminal_window.print_at(
-                    (BUFFER_POS + 1) as usize,
-                    CURSOR_Y as usize,
-                    core::str::from_utf8(&c_str).unwrap_or("")
-                );
-            }
+        let mut terminal_lock = TERMINAL.lock();
+        if let Some(terminal) = terminal_lock.as_mut() {
+            terminal.handle_input(c, &mut COMMAND_BUFFER, &mut BUFFER_POS);
         }
     }
+}
+
+pub fn set_esc_pressed(pressed: bool) {
+    *ESC_PRESSED.lock() = pressed;
+}
+
+pub fn is_esc_pressed() -> Option<bool> {
+    Some(*ESC_PRESSED.lock())
 }

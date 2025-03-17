@@ -141,15 +141,6 @@ impl WindowManager {
         }
     }
 
-
-    pub fn get_active_window(&mut self) -> Option<Window> {
-        if self.active_window < self.windows.len() {
-            self.windows[self.active_window]
-        } else {
-            None
-        }
-    }
-
     pub fn draw_all(&self) {
         let active = self.active_window;
         

@@ -17,9 +17,9 @@
 <h4 align="center">
   <a href="#get-started">Install</a>
   ·
-  <a href="https://docs.parsonlabs.com/">Documentation</a>
+  <a href="https://os.parson.dev/docs">Documentation</a>
   ·
-  <a href="https://github.com/WillKirkmanM/music/releases">Releases</a>
+  <a href="https://github.com/WillKirkmanM/os/releases">Releases</a>
 </h4>
 
 <p align="center">ParsonLabbs OS is a operating system with a custom kernel and bootloader compatible with the x86_64 architecture</p>
